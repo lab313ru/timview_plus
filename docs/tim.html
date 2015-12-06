@@ -1,0 +1,40 @@
+<html><body background="../bg.gif" bgcolor="black" text="white">
+<h1>TIM Graphics Format</h1><p>
+<h2>Header</h2><p>
+<table width=100% border=1>
+<tr><td align=center width=20% colspan=2>Name</td><td align=center width=20%>Size</td><td align=center>Description</td></tr>
+<tr><td colspan=2>Header</td><td>8 Bytes</td></tr>
+<tr><td>&nbsp;</td><td>Signature</td><td>4 Bytes</td><td align=center>0x10 0x00 0x00 0x00</td></tr>
+<tr><td>&nbsp;</td><td>BPP Mode</td><td>1 Byte</td><td align=center>This tells what bit mode the graphics is in. 0x08 signifies 4bpp, 0x09 signifies 8bpp, 0x02 signifies 16 bpp, and 0x03 signifies 24 bpp mode.</td></tr>
+<tr><td>&nbsp;</td><td>Reserved</td><td>3 Bytes</td><td align=center>0x00 0x00 0x00</td></tr>
+<tr><td height=30></td></tr>
+
+<tr><td colspan=2>Palette Info</td><td>12+ Bytes</td><td align=center>Only present for bit modes less than 16.</td></tr>
+<tr><td>&nbsp;</td><td>Length of the CLUT Data</td><td>4 Bytes</td><td align=center>
+This is the length of the CLUT Data + 12 (accounting for 12 bytes before the CLUT Data starts).<p>It should equal: Number of Colors in CLUT * Number of CLUTs * 2 + 0xC</td></tr>
+<tr><td>&nbsp;</td><td>Palette Org X</td><td>2 Bytes</td><td align=center>X coordinate in frame buffer.</td></tr>
+<tr><td>&nbsp;</td><td>Palette Org Y</td><td>2 Bytes</td><td align=center>Y coordinate in frame buffer.</td></tr>
+<tr><td>&nbsp;</td><td>Number of Colors in CLUT</td><td>2 Bytes</td><td align=center>Depends on the BPP Mode. The value for 4 bpp is 16, and for 8 bpp is 256.</td></tr>
+<tr><td>&nbsp;</td><td>Number of CLUTs</td><td>2 Bytes</td><td align=center>This is the number of CLUT groupings.</td></tr>
+<tr><td>&nbsp;</td><td>CLUT Data</td><td>Number of CLUTs * Number of Colors in CLUT * 2</td></tr>
+<tr><td height=30></td></tr>
+
+<tr><td colspan=2>Image Info</td><td>12+ Bytes</td><td align=center>Present for all modes.</td></tr>
+<tr><td>&nbsp;</td><td>Length of the Image Data</td><td>4 Bytes</td><td align=center>
+This is the length of the Image Data + 12 (accounting for 12 bytes before Image Data starts).<p>It should equal: Image Width * 2 * Image Height + 0xC</td></tr>
+<tr><td>&nbsp;</td><td>Image Org X</td><td>2 Bytes</td><td align=center>Frame buffer X coordinate.</td></tr>
+<tr><td>&nbsp;</td><td>Image Org Y</td><td>2 Bytes</td><td align=center>Frame buffer Y coordinate.</td></tr>
+<tr><td>&nbsp;</td><td>Image Width</td><td>2 Bytes</td><td align=center>* See below</td></tr>
+<tr><td>&nbsp;</td><td>Image Height</td><td>2 Bytes</td><td align=center>This is the height of the image in pixels.</td></tr>
+<tr><td>&nbsp;</td><td>Image Data</td><td>Varies</td><td align=center>Contains data on all the pixels in the image.</td></tr>
+</table><p>
+* Note: To get the actual Width, you must multiply the number by either 4 in 4bpp, 2 in 8bpp, 1 in 16bpp, or 1.5 in 24bpp mode to get it in terms of Pixels.<p>
+<h2>CLUTs</h2><p>
+Each CLUT entry is 2 Bytes and all the colors are stored in the order TBGR (Transparency, Blue, Green, and Red). The Transparency bit is only 1 bit, while the others are 5 bits each.<p>
+Note: For the CLUT Date in 4bpp, there are 16 Colors per CLUT, 32 bytes per CLUT. In 8bpp, there are 256 Colors per CLUT, 512 bytes per CLUT.<p>
+<h2>Actual Image Data</h2><p>
+4 bpp mode: Each byte contains 2 pixels (4 bits per pixel). Each 4 bits is a numeric refernce to the CLUT Data.<br>
+8 bpp mode: Each byte contains 1 pixel (8 bits per pixel). Each byte is a numeric refernce to the CLUT Data.<br>
+16 bpp mode: Each 2 bytes contain 1 pixel (16 bits per pixel) which is in the same format as the CLUT itself.<br>
+24 bpp mode: Each 3 bytes contain 1 pixel (24 bytes per pixel). It is the same as the CLUT except each color is 1 byte instead of 5 bits.<br>
+</body></html>
